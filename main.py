@@ -2,11 +2,11 @@ import sys
 
 
 def run_file(filename: str) -> None:
-    print(f'run_file() ({filename})')
+    print(f"run_file() ({filename})")
 
 
 def run_prompt() -> None:
-    print('run_prompt()')
+    print("run_prompt()")
 
 
 def main():
@@ -20,5 +20,5 @@ def main():
         run_prompt()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
