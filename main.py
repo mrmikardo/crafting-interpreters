@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 
-import dataclasses
 import sys
 
 import errors
-
-
-@dataclasses.dataclass
-class Token:
-    lexeme: str
+import tokens
 
 
 class Scanner:
@@ -18,7 +13,7 @@ class Scanner:
     def __init__(self, source: str) -> None:
         self.source = source
 
-    def scan_tokens(self) -> list[Token]:
+    def scan_tokens(self) -> list[tokens.Token]:
         return []
 
 
