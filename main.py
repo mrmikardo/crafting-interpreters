@@ -1,10 +1,31 @@
 #!/usr/bin/env python3
 
 import sys
+from dataclasses import dataclass
+
+
+@dataclass
+class Token:
+    lexeme: str
+
+
+class Scanner:
+
+    source: str
+
+    def __init__(self, source: str) -> None:
+        self.source = source
+
+    def scan_tokens(self) -> list[Token]:
+        return []
 
 
 def _run(source: str) -> None:
-    pass
+    scanner = Scanner(source)
+    tokens = scanner.scan_tokens()
+
+    for token in tokens:
+        print(f"Token: {token}")
 
 
 def run_file(filename: str) -> None:
