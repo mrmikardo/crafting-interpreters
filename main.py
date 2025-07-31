@@ -3,12 +3,22 @@
 import sys
 
 
+def _run(source: str) -> None:
+    pass
+
+
 def run_file(filename: str) -> None:
-    print(f"run_file() ({filename})")
+    with open(filename) as f:
+        _run(f.read())
 
 
 def run_prompt() -> None:
-    print("run_prompt()")
+    while True:
+        try:
+            line = input("> ")
+            _run(line)
+        except (EOFError, KeyboardInterrupt):
+            break
 
 
 def main():
