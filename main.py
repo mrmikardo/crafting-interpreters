@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import dataclasses
 import sys
-from dataclasses import dataclass
+
+import errors
 
 
-@dataclass
+@dataclasses.dataclass
 class Token:
     lexeme: str
 
@@ -31,6 +33,8 @@ def _run(source: str) -> None:
 def run_file(filename: str) -> None:
     with open(filename) as f:
         _run(f.read())
+        if errors.had_error:
+            sys.exit(65)
 
 
 def run_prompt() -> None:
@@ -38,6 +42,7 @@ def run_prompt() -> None:
         try:
             line = input("> ")
             _run(line)
+            errors.had_error = False
         except (EOFError, KeyboardInterrupt):
             break
 
