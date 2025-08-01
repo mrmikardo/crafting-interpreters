@@ -89,6 +89,7 @@ class Scanner:
 
     def scan_tokens(self) -> list[Token]:
         while not self._is_at_end():
+            # We are at the beginning of the next lexeme => scan it.
             self.start = self.current
             self._scan_token()
         self.tokens.append(
