@@ -2,7 +2,7 @@ import dataclasses
 import enum
 
 
-class TokenType(enum):
+class TokenType(enum.Enum):
 
     # Single-character tokens
     LEFT_PAREN = "left_paren"
