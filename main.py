@@ -3,18 +3,36 @@
 import sys
 
 import errors
-import tokens
+from tokens import Token, TokenType
 
 
 class Scanner:
 
     source: str
+    tokens: list[Token]
+
+    # Variables to keep track of scanning process
+    start: int = 0
+    current: int = 0
+    line: int = 1
 
     def __init__(self, source: str) -> None:
         self.source = source
 
-    def scan_tokens(self) -> list[tokens.Token]:
-        return []
+    def _is_at_end(self) -> bool:
+        return False  # TODO: implement this
+
+    def _scan_token(self) -> None:
+        pass
+
+    def scan_tokens(self) -> list[Token]:
+        while not self._is_at_end():
+            self.start = self.current
+            self._scan_token()
+        self.tokens.append(
+            Token(lexeme="", type=TokenType.EOF, literal=None, line=self.line)
+        )
+        return self.tokens
 
 
 def _run(source: str) -> None:
