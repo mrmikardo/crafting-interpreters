@@ -30,24 +30,14 @@ class Scanner:
         return self.current >= len(self.source)
 
     def _add_token(self, type: TokenType, literal: Any | None = None) -> None:
-        if literal:
-            self.tokens.append(
-                Token(
-                    lexeme=self.source[self.start : self.current],
-                    type=type,
-                    literal=literal,
-                    line=self.line,
-                )
+        self.tokens.append(
+            Token(
+                lexeme=self.source[self.start : self.current],
+                type=type,
+                literal=literal,
+                line=self.line,
             )
-        else:
-            self.tokens.append(
-                Token(
-                    lexeme=self.source[self.start : self.current],
-                    type=type,
-                    literal=None,
-                    line=self.line,
-                )
-            )
+        )
 
     def _scan_token(self) -> None:
         char = self._advance()
