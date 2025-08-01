@@ -52,7 +52,7 @@ class TokenType(enum.Enum):
 class Token:
     lexeme: str
     type: TokenType
-    literal: str
+    literal: str | None
     line: int
 
     def __str__(self):
