@@ -20,7 +20,7 @@ class Scanner:
         self.source = source
 
     def _is_at_end(self) -> bool:
-        return False  # TODO: implement this
+        return self.current > len(self.source)
 
     def _scan_token(self) -> None:
         pass
