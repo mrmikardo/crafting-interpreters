@@ -67,6 +67,8 @@ class Scanner:
             self._add_token(TokenType.GREATER)
         elif char == "<":
             self._add_token(TokenType.LESS)
+        else:
+            errors.error(self.line, "Unexpected character")
 
     def scan_tokens(self) -> list[Token]:
         while not self._is_at_end():
