@@ -11,6 +11,10 @@ class TokenType(enum.Enum):
     RIGHT_BRACE = "right_brace"
     COMMA = "comma"
     DOT = "dot"
+    MINUS = "minus"
+    PLUS = "plus"
+    STAR = "star"
+    SEMICOLON = "semicolon"
 
     # One- or two-character tokens
     BANG = "bang"

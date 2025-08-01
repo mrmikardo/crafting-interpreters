@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+from typing import Any
 
 import errors
 from tokens import Token, TokenType
@@ -18,12 +19,64 @@ class Scanner:
 
     def __init__(self, source: str) -> None:
         self.source = source
+        self.tokens = []
+
+    def _advance(self) -> str:
+        char = self.source[self.current]
+        self.current += 1
+        return char
 
     def _is_at_end(self) -> bool:
-        return self.current > len(self.source)
+        return self.current >= len(self.source)
+
+    def _add_token(self, type: TokenType, literal: Any | None = None) -> None:
+        if literal:
+            self.tokens.append(
+                Token(
+                    lexeme=self.source[self.start : self.current],
+                    type=type,
+                    literal=literal,
+                    line=self.line,
+                )
+            )
+        else:
+            self.tokens.append(
+                Token(
+                    lexeme=self.source[self.start : self.current],
+                    type=type,
+                    literal=None,
+                    line=self.line,
+                )
+            )
 
     def _scan_token(self) -> None:
-        pass
+        char = self._advance()
+        if char == "(":
+            self._add_token(TokenType.LEFT_PAREN)
+        elif char == ")":
+            self._add_token(TokenType.RIGHT_PAREN)
+        elif char == "{":
+            self._add_token(TokenType.LEFT_BRACE)
+        elif char == "}":
+            self._add_token(TokenType.RIGHT_BRACE)
+        elif char == ",":
+            self._add_token(TokenType.COMMA)
+        elif char == ".":
+            self._add_token(TokenType.DOT)
+        elif char == "-":
+            self._add_token(TokenType.MINUS)
+        elif char == "+":
+            self._add_token(TokenType.PLUS)
+        elif char == "*":
+            self._add_token(TokenType.STAR)
+        elif char == ";":
+            self._add_token(TokenType.SEMICOLON)
+        elif char == "!":
+            self._add_token(TokenType.BANG)
+        elif char == ">":
+            self._add_token(TokenType.GREATER)
+        elif char == "<":
+            self._add_token(TokenType.LESS)
 
     def scan_tokens(self) -> list[Token]:
         while not self._is_at_end():
