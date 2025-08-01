@@ -26,6 +26,14 @@ class Scanner:
         self.current += 1
         return char
 
+    def _match(self, expected: str) -> bool:
+        if self._is_at_end():
+            return False
+        if self.source[self.current] == expected:
+            self.current += 1
+            return True
+        return False
+
     def _is_at_end(self) -> bool:
         return self.current >= len(self.source)
 
@@ -62,11 +70,20 @@ class Scanner:
         elif char == ";":
             self._add_token(TokenType.SEMICOLON)
         elif char == "!":
-            self._add_token(TokenType.BANG)
+            if self._match("="):
+                self._add_token(TokenType.BANG_EQUAL)
+            else:
+                self._add_token(TokenType.BANG)
         elif char == ">":
-            self._add_token(TokenType.GREATER)
+            if self._match("="):
+                self._add_token(TokenType.GREATER_EQUAL)
+            else:
+                self._add_token(TokenType.GREATER)
         elif char == "<":
-            self._add_token(TokenType.LESS)
+            if self._match("="):
+                self._add_token(TokenType.LESS_EQUAL)
+            else:
+                self._add_token(TokenType.LESS)
         else:
             errors.error(self.line, "Unexpected character")
 
