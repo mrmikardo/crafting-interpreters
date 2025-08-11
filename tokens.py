@@ -61,4 +61,4 @@ class Token:
     line: int
 
     def __str__(self):
-        return self.type + " " + self.lexeme + " " + self.literal
+        return self.type.value + " " + self.lexeme + " " + (self.literal or "")
