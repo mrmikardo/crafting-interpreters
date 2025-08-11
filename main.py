@@ -96,6 +96,10 @@ class Scanner:
                     self._advance()
             else:
                 self._add_token(TokenType.SLASH)
+        elif char == "\n":
+            self.line += 1
+        elif char in [" ", "\t", "\r"]:
+            return None  # Ignore whitespace
         else:
             errors.error(self.line, "Unexpected character")
 
