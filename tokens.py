@@ -15,6 +15,7 @@ class TokenType(enum.Enum):
     PLUS = "plus"
     STAR = "star"
     SEMICOLON = "semicolon"
+    SLASH = "slash"
 
     # One- or two-character tokens
     BANG = "bang"

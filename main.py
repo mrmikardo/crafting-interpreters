@@ -34,6 +34,11 @@ class Scanner:
             return True
         return False
 
+    def _peek(self) -> str:
+        if self._is_at_end():
+            return "\0"
+        return self.source[self.current]
+
     def _is_at_end(self) -> bool:
         return self.current >= len(self.source)
 
@@ -84,6 +89,13 @@ class Scanner:
                 self._add_token(TokenType.LESS_EQUAL)
             else:
                 self._add_token(TokenType.LESS)
+        elif char == "/":
+            if self._match("/"):
+                # We are dealing with a comment => advance through it, don't tokenize.
+                while self._peek() != "\n" and not self._is_at_end():
+                    self._advance()
+            else:
+                self._add_token(TokenType.SLASH)
         else:
             errors.error(self.line, "Unexpected character")
 
