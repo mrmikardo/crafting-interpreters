@@ -52,6 +52,21 @@ class Scanner:
             )
         )
 
+    def _string(self) -> None:
+        while self._peek() != '"' and not self._is_at_end():
+            if self._peek() == "\n":
+                self.line += 1
+            self._advance()
+
+        if self._is_at_end():
+            errors.error(self.line, "Unterminated string.")
+
+        # Capture the closing '"'
+        self._advance()
+
+        value = self.source[self.start + 1 : self.current - 1]
+        self._add_token(TokenType.STRING, value)
+
     def _scan_token(self) -> None:
         char = self._advance()
         if char == "(":
@@ -105,6 +120,8 @@ class Scanner:
             self.line += 1
         elif char in [" ", "\t", "\r"]:
             return None  # Ignore whitespace
+        elif char == '"':
+            self._string()
         else:
             errors.error(self.line, "Unexpected character")
 
