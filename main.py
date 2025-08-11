@@ -79,6 +79,11 @@ class Scanner:
                 self._add_token(TokenType.BANG_EQUAL)
             else:
                 self._add_token(TokenType.BANG)
+        elif char == "=":
+            if self._match("="):
+                self._add_token(TokenType.EQUAL_EQUAL)
+            else:
+                self._add_token(TokenType.EQUAL)
         elif char == ">":
             if self._match("="):
                 self._add_token(TokenType.GREATER_EQUAL)
