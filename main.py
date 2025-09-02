@@ -4,7 +4,7 @@ import sys
 from typing import Any
 
 import errors
-from tokens import Token, TokenType
+from tokens import Token, TokenType, IDENTIFIERS
 
 
 class Scanner:
@@ -84,6 +84,14 @@ class Scanner:
         value = float(self.source[self.start : self.current])
         self._add_token(TokenType.NUMBER, value)
 
+    def _identifier(self) -> None:
+        while self._peek().isalnum():
+            self._advance()
+
+        value = self.source[self.start : self.current]
+        token_type = IDENTIFIERS.get(value, TokenType.IDENTIFIER)
+        self._add_token(token_type)
+
     def _scan_token(self) -> None:
         char = self._advance()
         if char == "(":
@@ -142,6 +150,8 @@ class Scanner:
             self._string()
         elif char.isdigit():
             self._number()
+        elif char.isalpha():
+            self._identifier()
         else:
             errors.error(self.line, "Unexpected character")
 
