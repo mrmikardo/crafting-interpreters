@@ -161,7 +161,7 @@ def _run(source: str) -> None:
     tokens = scanner.scan_tokens()
 
     for token in tokens:
-        print(f"Token: {token}")
+        print(token)
 
 
 def run_file(filename: str) -> None:

@@ -1,5 +1,6 @@
 import dataclasses
 import enum
+import utils
 
 
 class TokenType(enum.Enum):
@@ -61,4 +62,9 @@ class Token:
     line: int
 
     def __str__(self):
-        return self.type.value + " " + self.lexeme + " " + (str(self.literal) or "")
+        return (
+            utils.green(utils.bold("~~ Token ~~\n"))
+            + f"\t{utils.yellow(utils.underline('Type'))}: {self.type.value}\n"
+            + f"\t{utils.yellow(utils.underline('Lexeme'))}: {self.lexeme}\n"
+            + f"\t{utils.yellow(utils.underline('Literal'))} {(str(self.literal) or '')}\n"
+        )
