@@ -1,6 +1,6 @@
 import dataclasses
 import enum
-import utils
+from utils import utils
 
 
 class TokenType(enum.Enum):
