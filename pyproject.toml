@@ -1,6 +1,4 @@
 [project]
 name = "crafting-interpreters"
 version = "0.0.1"
-dependencies = [
-    "black>=26.5.1",
-]
+dependencies = []
