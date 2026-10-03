@@ -2,6 +2,10 @@ import sys
 
 # Lifted from sysexits.h
 EX_USAGE = 64
+EX_DATAERR = 65
+
+# Global error flag
+had_error = False
 
 
 # Scanner class
@@ -34,13 +38,19 @@ def run_file(path: str) -> None:
     with open(path, "r") as f:
         run("".join(f.readlines()))
 
+    if had_error:
+        sys.exit(EX_DATAERR)
+
 
 def run_prompt() -> None:
+    global had_error
+
     while True:
         line = input("> ")
         if not line:
             break
         run(line)
+        had_error = False
 
 
 def main() -> None:
