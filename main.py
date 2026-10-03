@@ -13,6 +13,15 @@ class Scanner:
         return []
 
 
+# Error handling
+def _report(line: int, where: str, message: str) -> None:
+    print(f"[line {line}] Error {where}: {message}", file=sys.stderr)
+
+
+def error(line: int, message: str) -> None:
+    _report(line, "", message)
+
+
 def run(source: str) -> None:
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
