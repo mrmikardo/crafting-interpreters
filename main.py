@@ -1,19 +1,11 @@
 import sys
 
 from error import HAD_ERROR
+from scanner import Scanner
 
 # Lifted from sysexits.h
 EX_USAGE = 64
 EX_DATAERR = 65
-
-
-# Scanner class
-class Scanner:
-    def __init__(self, source: str) -> None:
-        self.source = source
-
-    def scan_tokens(self) -> list[str]:
-        return []
 
 
 def run(source: str) -> None:
