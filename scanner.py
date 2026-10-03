@@ -37,6 +37,25 @@ class Scanner:
             return "\0"
         return self.source[self.current]
 
+    def _scan_string(self) -> None:
+        while self._peek() != '"' and not self.is_at_end:
+            if self._peek() == "\n":
+                self.line += 1
+            self._advance()
+
+        # Encountered EOF whilst parsing a string => string is
+        # unterminated.
+        if self.is_at_end:
+            error(self.line, "Unerminated string.")
+
+        # Consume the closing ".
+        self._advance()
+
+        # Trim the surrounding quotation marks and add a token with the
+        # literal value.
+        value = self.source[self.start + 1 : self.current - 1]
+        self._add_token(TokenType.STRING, value)
+
     @property
     def is_at_end(self) -> bool:
         return self.current >= len(self.source)
@@ -114,6 +133,9 @@ class Scanner:
                 return
             case "\n":
                 self.line += 1
+                return
+            case '"':
+                self._scan_string()
                 return
             case _:
                 error(self.line, "Unexpected character.")
