@@ -1,11 +1,10 @@
 import sys
 
+from error import HAD_ERROR
+
 # Lifted from sysexits.h
 EX_USAGE = 64
 EX_DATAERR = 65
-
-# Global error flag
-had_error = False
 
 
 # Scanner class
@@ -15,15 +14,6 @@ class Scanner:
 
     def scan_tokens(self) -> list[str]:
         return []
-
-
-# Error handling
-def _report(line: int, where: str, message: str) -> None:
-    print(f"[line {line}] Error {where}: {message}", file=sys.stderr)
-
-
-def error(line: int, message: str) -> None:
-    _report(line, "", message)
 
 
 def run(source: str) -> None:
@@ -38,19 +28,19 @@ def run_file(path: str) -> None:
     with open(path, "r") as f:
         run("".join(f.readlines()))
 
-    if had_error:
+    if HAD_ERROR:
         sys.exit(EX_DATAERR)
 
 
 def run_prompt() -> None:
-    global had_error
+    global HAD_ERROR
 
     while True:
         line = input("> ")
         if not line:
             break
         run(line)
-        had_error = False
+        HAD_ERROR = False
 
 
 def main() -> None:
