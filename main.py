@@ -4,6 +4,7 @@ import sys
 EX_USAGE = 64
 
 
+# Scanner class
 class Scanner:
     def __init__(self, source: str) -> None:
         self.source = source
