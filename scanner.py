@@ -24,6 +24,9 @@ class Scanner:
         self.current += 1
         return c
 
+    def _is_digit(self, c: str) -> bool:
+        return c >= "0" and c <= "9"
+
     def _match(self, expected: str) -> bool:
         if self.is_at_end:
             return False
@@ -36,6 +39,11 @@ class Scanner:
         if self.is_at_end:
             return "\0"
         return self.source[self.current]
+
+    def _peek_next(self) -> str:
+        if self.current + 1 >= len(self.source):
+            return "\0"
+        return self.source[self.current + 1]
 
     def _scan_string(self) -> None:
         while self._peek() != '"' and not self.is_at_end:
@@ -55,6 +63,21 @@ class Scanner:
         # literal value.
         value = self.source[self.start + 1 : self.current - 1]
         self._add_token(TokenType.STRING, value)
+
+    def _scan_number(self) -> None:
+        while self._is_digit(self._peek()):
+            self._advance()
+
+        # Check for fractional part.
+        if self._peek() == "." and self._is_digit(self._peek_next()):
+            # Consume the ".".
+            self._advance()
+            # Continuing consuming any digit characters after the
+            # decimal place.
+            while self._is_digit(self._peek()):
+                self._advance()
+
+        self._add_token(TokenType.NUMBER, float(self.source[self.start : self.current]))
 
     @property
     def is_at_end(self) -> bool:
@@ -138,7 +161,12 @@ class Scanner:
                 self._scan_string()
                 return
             case _:
-                error(self.line, "Unexpected character.")
+                # First, handle number literals.
+                if self._is_digit(c):
+                    self._scan_number()
+                else:
+                    # Handle unrecognised characters last.
+                    error(self.line, "Unexpected character.")
 
     def scan_tokens(self) -> list[Token]:
         while not self.is_at_end:
