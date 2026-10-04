@@ -24,9 +24,6 @@ class Scanner:
         self.current += 1
         return c
 
-    def _is_digit(self, c: str) -> bool:
-        return c >= "0" and c <= "9"
-
     def _match(self, expected: str) -> bool:
         if self.is_at_end:
             return False
@@ -65,16 +62,16 @@ class Scanner:
         self._add_token(TokenType.STRING, value)
 
     def _scan_number(self) -> None:
-        while self._is_digit(self._peek()):
+        while self._peek().isdigit():
             self._advance()
 
         # Check for fractional part.
-        if self._peek() == "." and self._is_digit(self._peek_next()):
+        if self._peek() == "." and self._peek_next().isdigit():
             # Consume the ".".
             self._advance()
             # Continuing consuming any digit characters after the
             # decimal place.
-            while self._is_digit(self._peek()):
+            while self._peek().isdigit():
                 self._advance()
 
         self._add_token(TokenType.NUMBER, float(self.source[self.start : self.current]))
@@ -162,7 +159,7 @@ class Scanner:
                 return
             case _:
                 # First, handle number literals.
-                if self._is_digit(c):
+                if c.isdigit():
                     self._scan_number()
                 else:
                     # Handle unrecognised characters last.
