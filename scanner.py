@@ -3,6 +3,25 @@ from dataclasses import dataclass, field
 from error import error
 from tokens import Token, TokenType
 
+RESERVED_WORDS_MAP = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
+
 
 @dataclass
 class Scanner:
@@ -41,6 +60,17 @@ class Scanner:
         if self.current + 1 >= len(self.source):
             return "\0"
         return self.source[self.current + 1]
+
+    def _scan_identifier(self) -> None:
+        while self._peek().isalnum():
+            self._advance()
+
+        # Determine if this is an identifier or a reserved word and set
+        # the token type accordingly.
+        text = self.source[self.start : self.current]
+        token_type = RESERVED_WORDS_MAP.get(text, TokenType.IDENTIFIER)
+
+        self._add_token(token_type)
 
     def _scan_string(self) -> None:
         while self._peek() != '"' and not self.is_at_end:
@@ -161,6 +191,9 @@ class Scanner:
                 # First, handle number literals.
                 if c.isdigit():
                     self._scan_number()
+                # Then handle reserved words and identifiers.
+                elif c.isalpha():
+                    self._scan_identifier()
                 else:
                     # Handle unrecognised characters last.
                     error(self.line, "Unexpected character.")
