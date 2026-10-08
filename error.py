@@ -1,4 +1,8 @@
 import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tokens import Token
 
 HAD_ERROR = False
 
@@ -12,3 +16,12 @@ def error(line: int, message: str) -> None:
 
     _report(line, "", message)
     HAD_ERROR = True
+
+
+def token_error(token: "Token", message: str) -> None:
+    from tokens import TokenType
+
+    if token.type == TokenType.EOF:
+        _report(token.line, " at end", message)
+    else:
+        _report(token.line, f" at '{token.lexeme}'", message)
