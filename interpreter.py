@@ -11,6 +11,14 @@ class Interpreter(Visitor[object]):
     def _evaluate(self, expr: "Expr") -> object:
         return expr.accept(self)
 
+    def _is_equal(self, a: object, b: object) -> bool:
+        if a is None and b is None:
+            return True
+        if a is None:
+            # b is not None
+            return False
+        return a.__eq__(b)
+
     def _truthy(self, obj: object) -> bool:
         """
         False and nil are falsey; everything else is truthy.
@@ -55,6 +63,18 @@ class Interpreter(Visitor[object]):
                 return int(left) / int(right)
             case TokenType.STAR:
                 return int(left) * int(right)
+            case TokenType.GREATER:
+                return int(left) > int(right)
+            case TokenType.GREATER_EQUAL:
+                return int(left) >= int(right)
+            case TokenType.LESS:
+                return int(left) < int(right)
+            case TokenType.LESS_EQUAL:
+                return int(left) <= int(right)
+            case TokenType.BANG_EQUAL:
+                return not self._is_equal(left, right)
+            case TokenType.EQUAL_EQUAL:
+                return self._is_equal(left, right)
 
         # Unreachable
         return None
