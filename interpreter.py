@@ -1,13 +1,33 @@
 from typing import TYPE_CHECKING, cast
 
 from expressions import Visitor
-from tokens import TokenType
+from tokens import Token, TokenType
 
 if TYPE_CHECKING:
     from expressions import Binary, Expr, Grouping, Literal, Unary
 
 
+class RuntimeError(Exception):
+    token: Token
+
+    def __init__(self, token: Token, message: str) -> None:
+        super().__init__(message)
+        self.token = token
+
+
 class Interpreter(Visitor[object]):
+    def _assert_number_operand(self, operator: Token, operand: object) -> None:
+        if isinstance(operand, int):
+            return
+        raise RuntimeError(operator, "Operand must be a number.")
+
+    def _assert_number_operands(
+        self, operator: Token, left: object, right: object
+    ) -> None:
+        if isinstance(left, int) and isinstance(right, int):
+            return
+        raise RuntimeError(operator, "Operands must be a number.")
+
     def _evaluate(self, expr: "Expr") -> object:
         return expr.accept(self)
 
@@ -40,6 +60,7 @@ class Interpreter(Visitor[object]):
 
         match expr.operator.type:
             case TokenType.MINUS:
+                self._assert_number_operand(expr.operator, right)
                 return -cast(int, right)
             case TokenType.BANG:
                 return not self._truthy(right)
@@ -53,23 +74,34 @@ class Interpreter(Visitor[object]):
 
         match expr.operator.type:
             case TokenType.MINUS:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) - int(right)
             case TokenType.PLUS:
                 if isinstance(left, int) and isinstance(right, int):
                     return int(left) + int(right)
                 elif isinstance(left, str) and isinstance(right, str):
                     return str(left) + str(right)
+                else:
+                    raise RuntimeError(
+                        expr.operator, "Operands must be two numbers or two strings."
+                    )
             case TokenType.SLASH:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) / int(right)
             case TokenType.STAR:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) * int(right)
             case TokenType.GREATER:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) > int(right)
             case TokenType.GREATER_EQUAL:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) >= int(right)
             case TokenType.LESS:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) < int(right)
             case TokenType.LESS_EQUAL:
+                self._assert_number_operands(expr.operator, left, right)
                 return int(left) <= int(right)
             case TokenType.BANG_EQUAL:
                 return not self._is_equal(left, right)
