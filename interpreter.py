@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, cast
 
+from error import error
 from expressions import Visitor
 from tokens import Token, TokenType
 
@@ -24,7 +25,7 @@ class Interpreter(Visitor[object]):
     def _assert_number_operands(
         self, operator: Token, left: object, right: object
     ) -> None:
-        if isinstance(left, int) and isinstance(right, int):
+        if isinstance(left, float) and isinstance(right, float):
             return
         raise RuntimeError(operator, "Operands must be a number.")
 
@@ -39,6 +40,18 @@ class Interpreter(Visitor[object]):
             return False
         return a.__eq__(b)
 
+    def _stringify(self, obj: object) -> str:
+        if obj is None:
+            return "nil"
+
+        if isinstance(obj, int):
+            text = str(obj)
+            if text.endswith(".0"):
+                text = text[0 : len(text) - 2]
+            return text
+
+        return str(obj)
+
     def _truthy(self, obj: object) -> bool:
         """
         False and nil are falsey; everything else is truthy.
@@ -48,6 +61,16 @@ class Interpreter(Visitor[object]):
         if isinstance(obj, bool):
             return bool(obj)
         return True
+
+    def interpret(self, expression: "Expr") -> None:
+        """
+        Entrypoint for the Interpreter class.
+        """
+        try:
+            value = self._evaluate(expression)
+            print(self._stringify(value))
+        except RuntimeError as e:
+            error(0, str(e))
 
     def visit_literal_expr(self, expr: "Literal") -> object:
         return expr.value
@@ -69,16 +92,16 @@ class Interpreter(Visitor[object]):
         return None
 
     def visit_binary_expr(self, expr: "Binary") -> object:
-        left = cast(int, self._evaluate(expr.left))
-        right = cast(int, self._evaluate(expr.right))
+        left = self._evaluate(expr.left)
+        right = self._evaluate(expr.right)
 
         match expr.operator.type:
             case TokenType.MINUS:
                 self._assert_number_operands(expr.operator, left, right)
                 return int(left) - int(right)
             case TokenType.PLUS:
-                if isinstance(left, int) and isinstance(right, int):
-                    return int(left) + int(right)
+                if isinstance(left, float) and isinstance(right, float):
+                    return float(left) + float(right)
                 elif isinstance(left, str) and isinstance(right, str):
                     return str(left) + str(right)
                 else:

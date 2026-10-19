@@ -1,19 +1,29 @@
 import sys
+from parser import Parser
 
-from error import HAD_ERROR
+from error import HAD_ERROR, HAD_RUNTIME_ERROR
+from interpreter import Interpreter
 from scanner import Scanner
 
 # Lifted from sysexits.h
 EX_USAGE = 64
 EX_DATAERR = 65
+EX_SOFTWARE = 70
 
 
 def run(source: str) -> None:
+    interpreter = Interpreter()
+
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
+    parser = Parser(tokens)
+    expression = parser.parse()
+    assert expression, "Something went wrong"
 
-    for token in tokens:
-        print(token)
+    if HAD_ERROR:
+        return
+
+    interpreter.interpret(expression)
 
 
 def run_file(path: str) -> None:
@@ -22,6 +32,9 @@ def run_file(path: str) -> None:
 
     if HAD_ERROR:
         sys.exit(EX_DATAERR)
+
+    if HAD_RUNTIME_ERROR:
+        sys.exit(EX_SOFTWARE)
 
 
 def run_prompt() -> None:
