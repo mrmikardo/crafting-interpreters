@@ -52,7 +52,10 @@ class Parser:
 
     def _synchronize(self) -> None:
         """
-        TODO: Document me.
+        Synchronize the parser state after an error has been hit.
+
+        Synchronizing simply means we walk through the stream of tokens
+        until we match a token which denotes a statement boundary.
         """
         self._advance()
         while not self._is_at_end:
