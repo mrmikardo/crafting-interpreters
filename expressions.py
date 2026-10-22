@@ -1,9 +1,14 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from tokens import Token
 
+if TYPE_CHECKING:
+    from statement import Stmt
 
+
+# TODO: pull this into its own file.
 class Visitor[R](ABC):
     """
     Base class of all visitor classes.
@@ -20,6 +25,12 @@ class Visitor[R](ABC):
 
     @abstractmethod
     def visit_unary_expr(self, expr: "Unary") -> R: ...
+
+    @abstractmethod
+    def visit_expression_stmt(self, stmt: "Stmt") -> R: ...
+
+    @abstractmethod
+    def visit_print_stmt(self, stmt: "Stmt") -> R: ...
 
 
 class Expr(ABC):
