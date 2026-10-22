@@ -1,8 +1,13 @@
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from error import token_error
 from expressions import Binary, Expr, Grouping, Literal, Unary
+from statement import Expression, Print
 from tokens import Token, TokenType
+
+if TYPE_CHECKING:
+    from expressions import Stmt
 
 
 class ParseError(Exception):
@@ -151,11 +156,30 @@ class Parser:
         # token which cannot start an expression.
         raise self._error(self._peek(), "Expect expression.")
 
-    def parse(self) -> Expr | None:
+    # Statements
+
+    def expression_statement(self) -> Expression:
+        value = self.expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Expression(value)
+
+    def print_statement(self) -> Print:
+        value = self.expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def statement(self) -> "Stmt":
+        if self._match([TokenType.PRINT]):
+            return self.print_statement()
+        return self.expression_statement()
+
+    def parse(self) -> list["Stmt"]:
         """
         Main entrypoint for the parser.
         """
-        try:
-            return self.expression()
-        except ParseError:
-            return None
+        statements = []
+
+        while not self._is_at_end:
+            statements.append(self.statement())
+
+        return statements

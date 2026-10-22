@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
 import sys
-from parser import Parser
 
 from error import HAD_ERROR, HAD_RUNTIME_ERROR
 from interpreter import Interpreter
+from parser import Parser
 from scanner import Scanner
 
 # Lifted from sysexits.h
@@ -17,13 +19,13 @@ def run(source: str) -> None:
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
     parser = Parser(tokens)
-    expression = parser.parse()
-    assert expression, "Something went wrong"
+    statements = parser.parse()
+    assert statements, "Something went wrong"
 
     if HAD_ERROR:
         return
 
-    interpreter.interpret(expression)
+    interpreter.interpret(statements)
 
 
 def run_file(path: str) -> None:

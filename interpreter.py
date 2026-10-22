@@ -2,10 +2,12 @@ from typing import TYPE_CHECKING, cast
 
 from error import error
 from expressions import Visitor
+from statement import Expression, Print
 from tokens import Token, TokenType
 
 if TYPE_CHECKING:
     from expressions import Binary, Expr, Grouping, Literal, Unary
+    from statement import Stmt
 
 
 class RuntimeError(Exception):
@@ -62,13 +64,16 @@ class Interpreter(Visitor[object]):
             return bool(obj)
         return True
 
-    def interpret(self, expression: "Expr") -> None:
+    def _execute(self, statement: "Stmt") -> None:
+        statement.accept(self)
+
+    def interpret(self, statements: list["Stmt"]) -> None:
         """
         Entrypoint for the Interpreter class.
         """
         try:
-            value = self._evaluate(expression)
-            print(self._stringify(value))
+            for statement in statements:
+                self._execute(statement)
         except RuntimeError as e:
             error(0, str(e))
 
@@ -133,3 +138,12 @@ class Interpreter(Visitor[object]):
 
         # Unreachable
         return None
+
+    # Statements
+
+    def visit_expression_stmt(self, stmt: Expression) -> None:
+        self._evaluate(stmt.expr)
+
+    def visit_print_stmt(self, stmt: Print) -> None:
+        value = self._evaluate(stmt.expr)
+        print(str(value))
