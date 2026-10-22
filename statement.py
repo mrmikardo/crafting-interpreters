@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from expressions import Expr, Visitor
+from tokens import Token
 
 
 class Stmt(ABC):
@@ -30,3 +31,12 @@ class Print(Stmt):
 
     def accept[R](self, visitor: Visitor[R]) -> R:
         return visitor.visit_print_stmt(self)
+
+
+@dataclass
+class Var(Stmt):
+    initializer: Expr
+    name: Token
+
+    def accept[R](self, visitor: Visitor[R]) -> R:
+        return visitor.visit_var_stmt(self)

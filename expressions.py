@@ -28,10 +28,16 @@ class Visitor[R](ABC):
     def visit_unary_expr(self, expr: "Unary") -> R: ...
 
     @abstractmethod
+    def visit_var_expr(self, expr: "Variable") -> R: ...
+
+    @abstractmethod
     def visit_expression_stmt(self, stmt: "Stmt") -> R: ...
 
     @abstractmethod
     def visit_print_stmt(self, stmt: "Stmt") -> R: ...
+
+    @abstractmethod
+    def visit_var_stmt(self, stmt: "Stmt") -> R: ...
 
 
 class Expr(ABC):
@@ -79,6 +85,14 @@ class Unary(Expr):
 
     def accept[R](self, visitor: Visitor[R]) -> R:
         return visitor.visit_unary_expr(self)
+
+
+@dataclass
+class Variable(Expr):
+    name: Token
+
+    def accept[R](self, visitor: Visitor[R]) -> R:
+        return visitor.visit_var_expr(self)
 
 
 # Visitor classes
