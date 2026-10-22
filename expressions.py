@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 # TODO: pull this into its own file.
+# TODO: split Visitor classes for expressions and statements.
 class Visitor[R](ABC):
     """
     Base class of all visitor classes.
