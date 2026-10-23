@@ -13,24 +13,24 @@ EX_DATAERR = 65
 EX_SOFTWARE = 70
 
 
-def run(source: str) -> None:
-    interpreter = Interpreter()
-
+def run(source: str, interpreter: Interpreter) -> None:
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
     parser = Parser(tokens)
-    statements = parser.parse()
-    assert statements, "Something went wrong"
+    expression = parser.parse()
+    assert expression, "Something went wrong"
 
     if HAD_ERROR:
         return
 
-    interpreter.interpret(statements)
+    interpreter.interpret(expression)
 
 
 def run_file(path: str) -> None:
+    interpreter = Interpreter()
+
     with open(path, "r") as f:
-        run("".join(f.readlines()))
+        run("".join(f.readlines()), interpreter)
 
     if HAD_ERROR:
         sys.exit(EX_DATAERR)
@@ -42,11 +42,13 @@ def run_file(path: str) -> None:
 def run_prompt() -> None:
     global HAD_ERROR
 
+    interpreter = Interpreter()
+
     while True:
         line = input("> ")
         if not line:
             break
-        run(line)
+        run(line, interpreter)
         HAD_ERROR = False
 
 
