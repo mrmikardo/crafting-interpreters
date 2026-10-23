@@ -21,6 +21,9 @@ class RuntimeError(Exception):
 class Environment:
     values: dict
 
+    def __init__(self) -> None:
+        self.values = {}
+
     def define(self, name: str, value: object) -> None:
         self.values[name] = value
 
