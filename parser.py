@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from error import token_error
-from expressions import Binary, Expr, Grouping, Literal, Unary
-from statement import Expression, Print
+from expressions import Binary, Expr, Grouping, Literal, Unary, Variable
+from statement import Expression, Print, Var
 from tokens import Token, TokenType
 
 if TYPE_CHECKING:
@@ -147,6 +147,9 @@ class Parser:
         if self._match([TokenType.STRING, TokenType.NUMBER]):
             return Literal(self._previous().literal)
 
+        if self._match([TokenType.IDENTIFIER]):
+            return Variable(self._previous())
+
         if self._match([TokenType.LEFT_PAREN]):
             expr = self.expression()
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
@@ -173,6 +176,24 @@ class Parser:
             return self.print_statement()
         return self.expression_statement()
 
+    def _var_declaration(self) -> Var:
+        name = self._consume(TokenType.IDENTIFIER, "Expect variable name.")
+
+        initializer = None
+        if self._match([TokenType.EQUAL]):
+            initializer = self.expression()
+
+        self._consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return Var(name=name, initializer=initializer)
+
+    def declaration(self) -> "Stmt | None":
+        try:
+            if self._match([TokenType.VAR]):
+                return self._var_declaration()
+            return self.statement()
+        except ParseError:
+            self._synchronize()
+
     def parse(self) -> list["Stmt"]:
         """
         Main entrypoint for the parser.
@@ -180,6 +201,6 @@ class Parser:
         statements = []
 
         while not self._is_at_end:
-            statements.append(self.statement())
+            statements.append(self.declaration())
 
         return statements
