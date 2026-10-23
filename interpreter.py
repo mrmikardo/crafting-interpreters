@@ -94,6 +94,8 @@ class Interpreter(Visitor[object]):
         except RuntimeError as e:
             error(0, str(e))
 
+    # Visitor methods
+
     def visit_literal_expr(self, expr: "Literal") -> object:
         return expr.value
 
