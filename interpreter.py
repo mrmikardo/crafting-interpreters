@@ -18,7 +18,24 @@ class RuntimeError(Exception):
         self.token = token
 
 
+class Environment:
+    values: dict
+
+    def define(self, name: str, value: object) -> None:
+        self.values[name] = value
+
+    def get(self, name: Token) -> object:
+        if name.lexeme in self.values:
+            return self.values[name.lexeme]
+        raise RuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
+
 class Interpreter(Visitor[object]):
+    _environment: Environment
+
+    def __init__(self) -> None:
+        self._environment = Environment()
+
     def _assert_number_operand(self, operator: Token, operand: object) -> None:
         if isinstance(operand, int):
             return
