@@ -35,7 +35,8 @@ class Print(Stmt):
 
 @dataclass
 class Var(Stmt):
-    initializer: Expr
+    # A variable declaration doesn't have to be initialized in Lox.
+    initializer: Expr | None
     name: Token
 
     def accept[R](self, visitor: Visitor[R]) -> R:
