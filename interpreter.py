@@ -6,8 +6,8 @@ from statement import Expression, Print
 from tokens import Token, TokenType
 
 if TYPE_CHECKING:
-    from expressions import Binary, Expr, Grouping, Literal, Unary
-    from statement import Stmt
+    from expressions import Binary, Expr, Grouping, Literal, Unary, Variable
+    from statement import Stmt, Var
 
 
 class RuntimeError(Exception):
@@ -158,6 +158,9 @@ class Interpreter(Visitor[object]):
         # Unreachable
         return None
 
+    def visit_var_expr(self, expr: "Variable") -> object:
+        return self._environment.get(expr.name)
+
     # Statements
 
     def visit_expression_stmt(self, stmt: Expression) -> None:
@@ -166,3 +169,11 @@ class Interpreter(Visitor[object]):
     def visit_print_stmt(self, stmt: Print) -> None:
         value = self._evaluate(stmt.expr)
         print(str(value))
+
+    def visit_var_stmt(self, stmt: "Var") -> None:
+        value = None
+
+        if stmt.initializer is not None:
+            value = self._evaluate(stmt.initializer)
+
+        self._environment.define(stmt.name.lexeme, value)
